@@ -12,18 +12,22 @@ public class Character : MonoBehaviour {
     private float jumpForce = 250f;
     private bool facingRight = true;
     AudioSource sound;
-    float time = 50f;
-    float timelapse = 0f;
-    bool jump = false;
+    bool jumping = false;
 	// Use this for initialization
 	void Start () {
         rb2d = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         cam.transform.position = new Vector3(rb2d.transform.position.x, cam.transform.position.y, cam.transform.position.z);
         anim = GetComponent<Animator>();        sound = GetComponent<AudioSource>();
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("floor"))
+        {
+            jumping = false;
+        }
         
     }
-
     // Update is called once per frame
     void Update () {
 
@@ -36,26 +40,17 @@ public class Character : MonoBehaviour {
         }
         
         sr.flipX = !facingRight;
-        if(jump == false)
-        {
+        if(jumping == false) {
+
             if (Input.GetButtonDown("Jump"))
             {
-                jump = true;
                 rb2d.AddForce(Vector2.up * jumpForce);
                 sound.Play();
+                jumping = true;
             }
         }
-            
         
-        if(jump == true)
-        {
-            timelapse += Time.fixedTime;
-            if(timelapse >= time)
-            {
-                jump = false;
-                timelapse = 0;
-            }
-        }
+
         
 	}
 }
